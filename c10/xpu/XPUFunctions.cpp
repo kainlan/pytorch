@@ -70,31 +70,13 @@ void enumDevices(std::vector<std::unique_ptr<sycl::device>>& devices) {
   // or a combination of dGPU and iGPU.
   for (const auto& platform : platform_list) {
     // Find the first platform that contains at least one dGPU.
-    if (has_gpu(platform, /*check_igpu=*/false)) {
-      for (const auto& device : platform.get_devices()) {
+    for (const auto& device : platform.get_devices()) {
         // Only add all dGPUs to the device list.
-        if (device.is_gpu() && !is_igpu(device)) {
-          devices.push_back(std::make_unique<sycl::device>(device));
-        }
+      if (device.is_gpu()) {
+        devices.push_back(std::make_unique<sycl::device>(device));
       }
-      return; // Exit early since we already found a platform with dGPU.
     }
   }
-
-  // Case 2: No dGPU found, but a platform with iGPU is available.
-  for (const auto& platform : platform_list) {
-    // Find the first platform that contains at least one iGPU.
-    if (has_gpu(platform, /*check_igpu=*/true)) {
-      for (const auto& device : platform.get_devices()) {
-        // Add all iGPUs to the device list.
-        if (device.is_gpu()) { // If the device is a GPU, it must be a iGPU.
-          devices.push_back(std::make_unique<sycl::device>(device));
-        }
-      }
-      return; // Exit early since we already found a platform with iGPU.
-    }
-  }
-
   // Case 3: No GPUs found (neither dGPU nor iGPU) - Do nothing.
 }
 
