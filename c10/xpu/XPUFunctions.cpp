@@ -77,7 +77,7 @@ void enumDevices(std::vector<std::unique_ptr<sycl::device>>& devices) {
       }
       return; // Exit early since we already found a platform with GPU.
     }
-    
+  }
   // Case 3: No GPUs found (neither dGPU nor iGPU) - Do nothing.
 }
 
