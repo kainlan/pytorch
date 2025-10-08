@@ -68,14 +68,11 @@ void enumDevices(std::vector<std::unique_ptr<sycl::device>>& devices) {
 
   // Case 1: Platform with a GPU found
   for (const auto& platform : platform_list) {
-    if (has_gpu(platform, /*check_igpu=*/true)) {
-      for (const auto& device : platform.get_devices()) {
-        // Only add GPUs to the device list.
-        if (device.is_gpu()) {
-          devices.push_back(std::make_unique<sycl::device>(device));
-        }
+    for (const auto& device : platform.get_devices()) {
+      // Only add GPUs to the device list.
+      if (device.is_gpu()) {
+        devices.push_back(std::make_unique<sycl::device>(device));
       }
-      return; // Exit early since we already found a platform with GPU.
     }
   }
   // Case 3: No GPUs found (neither dGPU nor iGPU) - Do nothing.
